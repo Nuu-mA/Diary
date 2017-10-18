@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TestApplication</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- flower dialog text -->
+    <string name="flower_label_color_text">花の色</string>
+    <string name="flower_label_name_text">名前</string>
+    <string name="flower_label_btn_ok">OK</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background Color -->
+    <color name="background_white">#ffff</color>
+    <color name="background_blue">#2196F3</color>
+    <color name="background_light_blue">#B3E5FC</color>
+    <color name="background_diivider_color">#E0E0E0</color>
+
+    <!-- Text Color -->
+    <color name="text_primary">#000</color>
+    <color name="text_secondary">#9E9E9E</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="btn_color">#ffff</color>
+    <color name="btn_highlight_color">#ff4081</color>
+</resources>
