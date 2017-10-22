@@ -33,7 +33,7 @@ public abstract class AbstractRealmHelper<T extends RealmObject> {
 
     public abstract RealmResults<T> deleteUnderList(int position);
 
-    public abstract RealmResults<T> getRealmObject(int position);
+    public abstract RealmObject getRealmObject(int position);
 
     protected void executeTransaction(Realm.Transaction transaction) {
         mRealm.executeTransaction(transaction);

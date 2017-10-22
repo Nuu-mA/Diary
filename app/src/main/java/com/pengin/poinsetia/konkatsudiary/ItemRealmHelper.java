@@ -41,13 +41,15 @@ public class ItemRealmHelper extends AbstractRealmHelper<Flower>{
     @Override
     public RealmResults<Flower> deleteUnderList(int position) {
         // 削除されたpositionよりも下の位置のリストを取ってくる
-        return mRealm.where(Flower.class).greaterThan("position",position).findAll();
+        return mRealm.where(Flower.class)
+                     .greaterThan("position",position)
+                     .findAllSorted("position");
     }
 
     @Override
-    public RealmResults<Flower> getRealmObject(int position) {
+    public Flower getRealmObject(int position) {
         // 指定した位置のFlowerを返却する
-        return mRealm.where(Flower.class).equalTo("position",position).findAll();
+        return mRealm.where(Flower.class).equalTo("position",position).findFirst();
     }
 
     @Override

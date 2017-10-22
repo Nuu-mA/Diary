@@ -125,7 +125,8 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
                         int fromPos = viewHolder.getAdapterPosition();
                         // 移動後の場所
                         int toPos = target.getAdapterPosition();
-                        insertList(fromPos,toPos);
+                        // インデックスの入れ替えを行う
+                        indexReplace(fromPos,toPos);
                         mAdapter.notifyItemMoved(fromPos,toPos);
                         return true;
                     }
@@ -219,17 +220,13 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
      * レコードの削除を実行
      */
     private void deleteList(int position) {
-        RealmResults<Flower> results = mRealmHelper.getRealmObject(position);
-        Flower flower = results.first();
-
         mRealmHelper.delete(position);
         // 削除後 position の 振り直し
         setUnderList(position);
-
     }
 
     /**
-     * 指定位置より下のリスト番号を振り直す
+     * 指定位置より下のIndexを振り直す
      * @param position 振り直し始め番号
      */
     private  void setUnderList(int position) {
@@ -237,58 +234,31 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
         RealmResults<Flower> results = mRealmHelper.deleteUnderList(position);
         if (results.size() != 0) {
             int newPos = position;
-            for (int i = 0; i < results.size(); i++) {
-                mRealmHelper.setPosition(results.get(i), newPos);
+            // 一度Arrayに詰める
+            ArrayList<Flower> flowers = new ArrayList<>();
+            for (int i = 0; i < results.size();i++ ) {
+                flowers.add(results.get(i));
+            }
+            // Arrayの情報を元に振り直しを実行する
+            for (Flower flower : flowers) {
+                mRealmHelper.setPosition(flower,newPos);
                 newPos++;
             }
+            flowers.clear();
         }
     }
 
     /**
-     * リストの入れ替え処理
-     * @param fromPos 開始位置
-     * @param toPos 差し込み位置
+     * Indexの入れ替えを実行する
+     * @param fromPos 移動前Index
+     * @param toPos 移動後Index
      */
-    private void insertList (int fromPos, int toPos) {
-        RealmResults<Flower> results = mRealmHelper.getRealmObject(fromPos);
-        if (results.size() != 0) {
-            Flower flower = results.first();
-            boolean isUP = (fromPos > toPos);
-            reassignedList(isUP ? toPos : fromPos, isUP);
-            mRealmHelper.setPosition(flower, toPos);
-        }
-
+    private void indexReplace(int fromPos, int toPos) {
+        Flower fromFlower = mRealmHelper.getRealmObject(fromPos);
+        Flower toFlower = mRealmHelper.getRealmObject(toPos);
+        mRealmHelper.setPosition(fromFlower, toPos);
+        mRealmHelper.setPosition(toFlower, fromPos);
     }
-
-    /**
-     * 番号を振り直す
-     * @param position 振り直し始め番号
-     * @param isUP 上下
-     */
-    private void reassignedList(int position, boolean isUP) {
-        // TODO 上下で処理を分ける (現在は 下から上に入れ替える時のみ正常に動作する)
-        // 削除した以下の位置のリストを取得
-        int startNum;
-        int newPosition;
-        if (isUP) {
-            startNum = position - 1;
-            newPosition = position + 1;
-        }
-        else {
-            startNum = position + 1;
-            newPosition = position -1;
-        }
-
-        RealmResults<Flower> results = mRealmHelper.deleteUnderList(startNum);
-        if (results.size() != 0) {
-            // 差し込まれるレコードの分、positionを１ずらす
-            for (int i = 0; i < results.size(); i++) {
-                mRealmHelper.setPosition(results.get(i), newPosition);
-                newPosition++;
-            }
-        }
-    }
-
 
     /**
      * Flower入力用Dialog
