@@ -185,6 +185,8 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
             ItemRealmHelper.insertOneShot(flower);
             // where
             RealmResults<Flower> results = mRealmHelper.findAll();
+            // positionでソート
+            results = results.sort("position");
             // リスト表示
             mAdapter = new RecyclerAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
