@@ -29,11 +29,11 @@ public abstract class AbstractRealmHelper<T extends RealmObject> {
 
     public abstract void delete(int position);
 
-    public abstract void setPosition(Flower flower,int position);
+    public abstract void setIndex(Person person, int index);
 
-    public abstract RealmResults<T> deleteUnderList(int position);
+    public abstract RealmResults<T> deleteUnderList(int index);
 
-    public abstract RealmObject getRealmObject(int position);
+    public abstract RealmObject getRealmObject(int index);
 
     protected void executeTransaction(Realm.Transaction transaction) {
         mRealm.executeTransaction(transaction);

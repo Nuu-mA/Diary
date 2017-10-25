@@ -4,7 +4,6 @@ package com.pengin.poinsetia.konkatsudiary;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -82,7 +81,7 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
                 // ダイアログフラグメンドの生成
                 DialogFragment newFragment = new FlowerDialogFragment();
                 newFragment.setTargetFragment(this,DIALOG_KEY);
-                newFragment.show(getFragmentManager(), "flower");
+                newFragment.show(getFragmentManager(), "person");
                 break;
             default:
                 break;
@@ -104,11 +103,11 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
         // リストの初期表示
         mRealmHelper = new ItemRealmHelper();
         // where
-        RealmResults<Flower> results = mRealmHelper.findAll();
+        RealmResults<Person> results = mRealmHelper.findAll();
         int listSize = results.size();
         if (listSize != 0) {
             // positionでソート
-            results = results.sort("position");
+            results = results.sort("index");
             // リスト表示
             mAdapter = new RecyclerAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
@@ -122,20 +121,20 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
                     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
                         // 元の場所
-                        int fromPos = viewHolder.getAdapterPosition();
+                        int fromIndex = viewHolder.getAdapterPosition();
                         // 移動後の場所
-                        int toPos = target.getAdapterPosition();
+                        int toIndex = target.getAdapterPosition();
                         // インデックスの入れ替えを行う
-                        indexReplace(fromPos,toPos);
-                        mAdapter.notifyItemMoved(fromPos,toPos);
+                        indexReplace(fromIndex,toIndex);
+                        mAdapter.notifyItemMoved(fromIndex,toIndex);
                         return true;
                     }
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        int position = viewHolder.getAdapterPosition();
-                        deleteList(position);
-                        mAdapter.notifyItemRemoved(position);
+                        int index = viewHolder.getAdapterPosition();
+                        deleteList(index);
+                        mAdapter.notifyItemRemoved(index);
 
                     }
                 });
@@ -148,13 +147,13 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
         if (resultCode == Activity.RESULT_OK){
             if (requestCode == DIALOG_KEY){
                 if (data != null) {
-                    String color = data.getStringExtra("color");
+                    int age = data.getIntExtra("age",0);
                     String name = data.getStringExtra("name");
                     // PrimaryKeyの取得
                     int primaryKey = getLastPrimaryKey() ;
-                    int position = getPosition();
+                    int position = getIndex();
                     // 受け取った値でDB追加とリスト表示
-                    createList(getFlower(primaryKey,color,name,position));
+                    createList(getPerson(primaryKey,age,name,position));
                     Log.d("mPrimaryKey", primaryKey +"");
                 }
             }
@@ -177,16 +176,16 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
     // ~~~~~~ Repository に移動予定 ~~~~~~
 
     // レコードの追加を実行
-    private void createList(Flower flower) {
+    private void createList(Person person) {
         // 空の時は追加しない
-        if (!flower.getColor().equals("") &&
-                !flower.getFlower().equals("")) {
+        if (person.getAge()!=0 &&
+                !person.getName().equals("")) {
             // insert
-            ItemRealmHelper.insertOneShot(flower);
+            ItemRealmHelper.insertOneShot(person);
             // where
-            RealmResults<Flower> results = mRealmHelper.findAll();
+            RealmResults<Person> results = mRealmHelper.findAll();
             // positionでソート
-            results = results.sort("position");
+            results = results.sort("index");
             // リスト表示
             mAdapter = new RecyclerAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
@@ -198,7 +197,7 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
      * @return PrimaryKey
      */
     private int getLastPrimaryKey() {
-        RealmResults<Flower> results = mRealmHelper.findAll();
+        RealmResults<Person> results = mRealmHelper.findAll();
         if (results.size() == 0) {
             return 0;
         } else {
@@ -209,44 +208,44 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
     }
 
     /**
-     * レコード追加用のPositionを返す
-     * @return Position
+     * レコード追加用のIndexを返す
+     * @return Index
      */
-    private int getPosition() {
-        // コード数がListPositionになる
-        RealmResults<Flower> results = mRealmHelper.findAll();
+    private int getIndex() {
+        // コード数がリストのインデックスになる
+        RealmResults<Person> results = mRealmHelper.findAll();
         return results.size();
     }
 
     /**
      * レコードの削除を実行
      */
-    private void deleteList(int position) {
-        mRealmHelper.delete(position);
-        // 削除後 position の 振り直し
-        setUnderList(position);
+    private void deleteList(int index) {
+        mRealmHelper.delete(index);
+        // 削除後 index の 振り直し
+        setUnderList(index);
     }
 
     /**
      * 指定位置より下のIndexを振り直す
-     * @param position 振り直し始め番号
+     * @param index 振り直し始め番号
      */
-    private  void setUnderList(int position) {
+    private  void setUnderList(int index) {
         // 削除した以下の位置のリストを取得
-        RealmResults<Flower> results = mRealmHelper.deleteUnderList(position);
+        RealmResults<Person> results = mRealmHelper.deleteUnderList(index);
         if (results.size() != 0) {
-            int newPos = position;
+            int newPos = index;
             // 一度Arrayに詰める
-            ArrayList<Flower> flowers = new ArrayList<>();
+            ArrayList<Person> persons = new ArrayList<>();
             for (int i = 0; i < results.size();i++ ) {
-                flowers.add(results.get(i));
+                persons.add(results.get(i));
             }
             // Arrayの情報を元に振り直しを実行する
-            for (Flower flower : flowers) {
-                mRealmHelper.setPosition(flower,newPos);
+            for (Person person : persons) {
+                mRealmHelper.setIndex(person,newPos);
                 newPos++;
             }
-            flowers.clear();
+            persons.clear();
         }
     }
 
@@ -256,10 +255,10 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
      * @param toPos 移動後Index
      */
     private void indexReplace(int fromPos, int toPos) {
-        Flower fromFlower = mRealmHelper.getRealmObject(fromPos);
-        Flower toFlower = mRealmHelper.getRealmObject(toPos);
-        mRealmHelper.setPosition(fromFlower, toPos);
-        mRealmHelper.setPosition(toFlower, fromPos);
+        Person fromPerson = mRealmHelper.getRealmObject(fromPos);
+        Person toPerson = mRealmHelper.getRealmObject(toPos);
+        mRealmHelper.setIndex(fromPerson, toPos);
+        mRealmHelper.setIndex(toPerson, fromPos);
     }
 
     /**
@@ -273,40 +272,39 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
             LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.flower_dialog_layout, null);
             builder.setView(view);
-            builder.setNegativeButton("閉じる", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Intent result = new Intent();
-                            TextView colorEditText = (TextView)view.findViewById(R.id.color_name_text);
-                            TextView nameEditText = (TextView)view.findViewById(R.id.flower_name_text);
-                            String colorText = colorEditText.getText().toString();
-                            String nameText = nameEditText.getText().toString();
-                            result.putExtra("color",colorText);
-                            result.putExtra("name",nameText);
-                            if (getTargetFragment() != null) {
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, result);
-                            }
-                        }
-                    });
+            builder.setNegativeButton("閉じる", (dialog, id) -> {
+                Intent result = new Intent();
+                TextView ageEditText = (TextView)view.findViewById(R.id.person_age_text);
+                TextView nameEditText = (TextView)view.findViewById(R.id.person_name_text);
+                String ageText = ageEditText.getText().toString();
+                int age = Integer.parseInt(ageText);
+                String nameText = nameEditText.getText().toString();
+                result.putExtra("age",age);
+                result.putExtra("name",nameText);
+                if (getTargetFragment() != null) {
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, result);
+                }
+            });
             return builder.create();
         }
     }
 
     /**
-     * DB追加用のFlowerを生成する
+     * DB追加用のPersonを生成する
      * @param id PrimaryKey
-     * @param color 花の色
-     * @param name 花の名前
-     * @param position リストの初期位置
-     * @return
+     * @param age 年齢
+     * @param name 名前
+     * @param index リストの初期位置
+     * @return Person
      */
-    private Flower getFlower(int id, String color, String name, int position) {
+    private Person getPerson(int id, int age, String name, int index) {
 
-        Flower flower = new Flower();
-        flower.setId(id);
-        flower.setColor(color);
-        flower.setFlower(name);
-        flower.setPosition(position);
+        Person person = new Person();
+        person.setId(id);
+        person.setAge(age);
+        person.setName(name);
+        person.setIndex(index);
 
-        return flower;
+        return person;
     }
 }
