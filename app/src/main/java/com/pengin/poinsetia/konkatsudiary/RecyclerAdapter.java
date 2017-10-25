@@ -2,7 +2,6 @@ package com.pengin.poinsetia.konkatsudiary;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import io.realm.OrderedRealmCollection;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    private OrderedRealmCollection<Flower> objects;
+    private OrderedRealmCollection<Person> objects;
     private LayoutInflater mInflater;
     private Context mContext;
     private OnRecyclerListener mListener;
@@ -24,10 +23,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final static int VIEWTYPE_B = 1;
 
 
-    public RecyclerAdapter(Context context, OrderedRealmCollection<Flower> flowers, OnRecyclerListener listener) {
+    public RecyclerAdapter(Context context, OrderedRealmCollection<Person> persons, OnRecyclerListener listener) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
-        objects = flowers;
+        objects = persons;
         mListener = listener;
         setHasStableIds(true);
     }
@@ -104,9 +103,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             detailTextAlpha = (TextView) itemView.findViewById(R.id.detail);
         }
 
-        void onBindViewHolder (Flower data) {
-            this.titleTextAlpha.setText(data.getColor());
-            this.detailTextAlpha.setText(data.getFlower());
+        void onBindViewHolder (Person data) {
+            this.titleTextAlpha.setText(String.valueOf(data.getAge()));
+            this.detailTextAlpha.setText(data.getName());
 
         }
 

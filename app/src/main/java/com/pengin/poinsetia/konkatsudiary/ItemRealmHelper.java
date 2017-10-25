@@ -1,28 +1,22 @@
 package com.pengin.poinsetia.konkatsudiary;
 
-import android.app.DownloadManager;
-import android.util.Log;
-
 import io.realm.Realm;
-import io.realm.RealmModel;
-import io.realm.RealmObject;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-public class ItemRealmHelper extends AbstractRealmHelper<Flower>{
+public class ItemRealmHelper extends AbstractRealmHelper<Person>{
 
-    public static void insertOneShot(Flower flower) {
-        executeTransactionOneShot(insertTransaction(flower));
+    public static void insertOneShot(Person person) {
+        executeTransactionOneShot(insertTransaction(person));
     }
 
-    private static Realm.Transaction insertTransaction(final Flower itemRealmObject) {
+    private static Realm.Transaction insertTransaction(final Person itemRealmObject) {
         return realm -> realm.insertOrUpdate(itemRealmObject);
     }
 
     @Override
-    public void update(Flower flower) {
+    public void update(Person person) {
         // レコードの追加
-        executeTransaction(realm -> realm.copyToRealmOrUpdate(flower));
+        executeTransaction(realm -> realm.copyToRealmOrUpdate(person));
     }
 
     @Override
@@ -33,28 +27,28 @@ public class ItemRealmHelper extends AbstractRealmHelper<Flower>{
     }
 
     @Override
-    public void setPosition(Flower flower, int position) {
+    public void setIndex(Person person, int index) {
         // リスト位置の再設定
-        executeTransaction(realm -> flower.setPosition(position));
+        executeTransaction(realm -> person.setIndex(index));
     }
 
     @Override
-    public RealmResults<Flower> deleteUnderList(int position) {
-        // 削除されたpositionよりも下の位置のリストを取ってくる
-        return mRealm.where(Flower.class)
-                     .greaterThan("position",position)
-                     .findAllSorted("position");
+    public RealmResults<Person> deleteUnderList(int index) {
+        // 削除されたindexよりも下の位置のリストを取ってくる
+        return mRealm.where(Person.class)
+                     .greaterThan("index",index)
+                     .findAllSorted("index");
     }
 
     @Override
-    public Flower getRealmObject(int position) {
-        // 指定した位置のFlowerを返却する
-        return mRealm.where(Flower.class).equalTo("position",position).findFirst();
+    public Person getRealmObject(int index) {
+        // 指定した位置のPersonを返却する
+        return mRealm.where(Person.class).equalTo("index",index).findFirst();
     }
 
     @Override
-    public RealmResults<Flower> findAll() {
-        return mRealm.where(Flower.class).findAll();
+    public RealmResults<Person> findAll() {
+        return mRealm.where(Person.class).findAll();
     }
 
 
