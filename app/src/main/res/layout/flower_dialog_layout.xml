@@ -15,12 +15,13 @@
         android:textColor="@color/text_primary"
         android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/person_age_text"
+    <Spinner
+        android:id="@+id/person_age_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:inputType="text"
+        android:background="@color/background_gray_color"
+        android:entries="@array/age_items"
         android:textColor="@color/text_primary"
         android:textSize="16sp"
         tools:ignore="LabelFor" />
@@ -38,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:background="@color/background_gray_color"
         android:inputType="text"
         android:textColor="@color/text_primary"
         android:textSize="16sp"

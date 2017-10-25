@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import io.realm.OrderedRealmCollection;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private OrderedRealmCollection<Person> objects;
@@ -23,7 +23,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final static int VIEWTYPE_B = 1;
 
 
-    public RecyclerAdapter(Context context, OrderedRealmCollection<Person> persons, OnRecyclerListener listener) {
+    public PersonAdapter(Context context, OrderedRealmCollection<Person> persons, OnRecyclerListener listener) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
         objects = persons;

@@ -4,7 +4,7 @@
     <color name="background_white">#ffff</color>
     <color name="background_blue">#2196F3</color>
     <color name="background_light_blue">#B3E5FC</color>
-    <color name="background_diivider_color">#E0E0E0</color>
+    <color name="background_gray_color">#E0E0E0</color>
 
     <!-- Text Color -->
     <color name="text_primary">#000</color>
