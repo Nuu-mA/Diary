@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecyclerFragment extends Fragment implements OnRecyclerListener,View.OnClickListener{
+public class PersonFragment extends Fragment implements OnRecyclerListener,View.OnClickListener{
 
     private final int DIALOG_KEY = 100;
 
@@ -40,14 +42,14 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
 
     // RecyclerViewとAdapter
     private RecyclerView mRecyclerView = null;
-    private RecyclerAdapter mAdapter = null;
+    private PersonAdapter mAdapter = null;
     private ItemRealmHelper mRealmHelper;
 
     public interface RecyclerFragmentListener {
         void onRecyclerEvent();
     }
 
-    public RecyclerFragment() {
+    public PersonFragment() {
         // Required empty public constructor
     }
 
@@ -109,7 +111,7 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
             // positionでソート
             results = results.sort("index");
             // リスト表示
-            mAdapter = new RecyclerAdapter(mActivity, results, this);
+            mAdapter = new PersonAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
 
         }
@@ -187,7 +189,7 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
             // positionでソート
             results = results.sort("index");
             // リスト表示
-            mAdapter = new RecyclerAdapter(mActivity, results, this);
+            mAdapter = new PersonAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
         }
     }
@@ -271,15 +273,28 @@ public class RecyclerFragment extends Fragment implements OnRecyclerListener,Vie
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogStyle);
             LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.flower_dialog_layout, null);
+            Intent result = new Intent();
+            // 年齢選択用プルダウンリスト
+            Spinner selectedAge = (Spinner) view.findViewById(R.id.person_age_spinner);
+            selectedAge.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position != 0) {
+                        String age = parent.getItemAtPosition(position).toString();
+                        result.putExtra("age", Integer.parseInt(age));
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // do Nothing
+                }
+            });
             builder.setView(view);
             builder.setNegativeButton("閉じる", (dialog, id) -> {
-                Intent result = new Intent();
-                TextView ageEditText = (TextView)view.findViewById(R.id.person_age_text);
+
                 TextView nameEditText = (TextView)view.findViewById(R.id.person_name_text);
-                String ageText = ageEditText.getText().toString();
-                int age = Integer.parseInt(ageText);
                 String nameText = nameEditText.getText().toString();
-                result.putExtra("age",age);
                 result.putExtra("name",nameText);
                 if (getTargetFragment() != null) {
                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, result);
