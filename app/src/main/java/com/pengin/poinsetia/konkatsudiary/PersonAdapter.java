@@ -94,18 +94,18 @@ public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // ViewHolder1
     private class viewHolderAlpha extends RecyclerView.ViewHolder {
 
-        TextView titleTextAlpha;
-        TextView detailTextAlpha;
+        TextView nameTextAlpha;
+        TextView ageTextAlpha;
 
         viewHolderAlpha(View itemView) {
             super(itemView);
-            titleTextAlpha = (TextView) itemView.findViewById(R.id.title);
-            detailTextAlpha = (TextView) itemView.findViewById(R.id.detail);
+            nameTextAlpha = (TextView) itemView.findViewById(R.id.person_name);
+            ageTextAlpha = (TextView) itemView.findViewById(R.id.person_age);
         }
 
         void onBindViewHolder (Person data) {
-            this.titleTextAlpha.setText(String.valueOf(data.getAge()));
-            this.detailTextAlpha.setText(data.getName());
+            this.nameTextAlpha.setText(data.getName());
+            this.ageTextAlpha.setText(String.valueOf(data.getAge()) + "歳");
 
         }
 
