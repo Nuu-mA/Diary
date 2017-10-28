@@ -43,17 +43,17 @@ public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         switch (viewType) {
             case VIEWTYPE_A:
                 return new viewHolderAlpha(mInflater
-                        .inflate(R.layout.list_item_a, viewGroup, false));
+                        .inflate(R.layout.list_item_person, viewGroup, false));
             case VIEWTYPE_B:
                 return new ViewHolderBeta(mInflater
                         .inflate(R.layout.list_item_b, viewGroup, false));
             default:
                 return new viewHolderAlpha(mInflater
-                        .inflate(R.layout.list_item_a, viewGroup, false));
+                        .inflate(R.layout.list_item_person, viewGroup, false));
         }
         */
         return new viewHolderAlpha(mInflater
-                .inflate(R.layout.list_item_a, viewGroup, false));
+                .inflate(R.layout.list_item_person, viewGroup, false));
     }
 
     @Override
