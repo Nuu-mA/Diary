@@ -1,4 +1,4 @@
-package com.pengin.poinsetia.konkatsudiary;
+package com.pengin.poinsetia.konkatsudiary.View;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.R;
+import com.pengin.poinsetia.konkatsudiary.Model.RowData;
 
 import io.realm.OrderedRealmCollection;
 

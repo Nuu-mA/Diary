@@ -1,9 +1,12 @@
-package com.pengin.poinsetia.konkatsudiary;
+package com.pengin.poinsetia.konkatsudiary.Model;
+
+import com.pengin.poinsetia.konkatsudiary.Model.AbstractRealmHelper;
+import com.pengin.poinsetia.konkatsudiary.Model.Person;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class ItemRealmHelper extends AbstractRealmHelper<Person>{
+public class ItemRealmHelper extends AbstractRealmHelper<Person> {
 
     public static void insertOneShot(Person person) {
         executeTransactionOneShot(insertTransaction(person));

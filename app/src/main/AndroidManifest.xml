@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".View.PersonActivity">
             <intent-filter
                 android:label="日記帳">
                 <action android:name="android.intent.action.MAIN" />

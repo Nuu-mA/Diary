@@ -1,4 +1,4 @@
-package com.pengin.poinsetia.konkatsudiary;
+package com.pengin.poinsetia.konkatsudiary.View;
 
 
 import android.app.Activity;
@@ -24,6 +24,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.pengin.poinsetia.konkatsudiary.Model.ItemRealmHelper;
+import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.R;
 
 import java.util.ArrayList;
 
