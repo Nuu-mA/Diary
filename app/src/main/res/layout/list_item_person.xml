@@ -24,12 +24,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="0.5"
+                android:textSize="20sp"
                 android:textColor="@color/text_primary"/>
             <TextView
                 android:id="@+id/person_age"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="0.5"
+                android:textColor="@color/text_secondary"/>
+            <TextView
+                android:id="@+id/person_job"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:text="アプリエンジニア"
+                android:textColor="@color/text_secondary"/>
+            <TextView
+                android:id="@+id/person_income"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:text="1,000万"
                 android:textColor="@color/text_secondary"/>
 
         </LinearLayout>

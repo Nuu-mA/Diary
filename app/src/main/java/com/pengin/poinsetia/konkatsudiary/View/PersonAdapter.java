@@ -1,4 +1,4 @@
-package com.pengin.poinsetia.konkatsudiary;
+package com.pengin.poinsetia.konkatsudiary.View;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.R;
+import com.pengin.poinsetia.konkatsudiary.Model.RowData;
 
 import io.realm.OrderedRealmCollection;
 
@@ -39,17 +43,17 @@ public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         switch (viewType) {
             case VIEWTYPE_A:
                 return new viewHolderAlpha(mInflater
-                        .inflate(R.layout.list_item_a, viewGroup, false));
+                        .inflate(R.layout.list_item_person, viewGroup, false));
             case VIEWTYPE_B:
                 return new ViewHolderBeta(mInflater
                         .inflate(R.layout.list_item_b, viewGroup, false));
             default:
                 return new viewHolderAlpha(mInflater
-                        .inflate(R.layout.list_item_a, viewGroup, false));
+                        .inflate(R.layout.list_item_person, viewGroup, false));
         }
         */
         return new viewHolderAlpha(mInflater
-                .inflate(R.layout.list_item_a, viewGroup, false));
+                .inflate(R.layout.list_item_person, viewGroup, false));
     }
 
     @Override

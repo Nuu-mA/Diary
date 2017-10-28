@@ -8,24 +8,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/person_age_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/person_label_age_text"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp" />
-
-    <Spinner
-        android:id="@+id/person_age_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:entries="@array/age_items"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp"
-        tools:ignore="LabelFor" />
-
-    <TextView
         android:id="@+id/person_name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,6 +22,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:inputType="text"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        tools:ignore="LabelFor" />
+
+    <TextView
+        android:id="@+id/person_age_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/person_label_age_text"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:id="@+id/person_age_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:entries="@array/age_items"
         android:textColor="@color/text_primary"
         android:textSize="16sp"
         tools:ignore="LabelFor" />

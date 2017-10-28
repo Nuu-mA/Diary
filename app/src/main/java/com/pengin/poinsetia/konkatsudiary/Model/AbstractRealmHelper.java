@@ -1,4 +1,6 @@
-package com.pengin.poinsetia.konkatsudiary;
+package com.pengin.poinsetia.konkatsudiary.Model;
+
+import com.pengin.poinsetia.konkatsudiary.Model.Person;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
