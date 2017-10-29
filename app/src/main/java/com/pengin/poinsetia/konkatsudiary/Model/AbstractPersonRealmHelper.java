@@ -7,11 +7,11 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
-public abstract class AbstractRealmHelper<T extends RealmObject> {
+public abstract class AbstractPersonRealmHelper<T extends RealmObject> {
 
     protected final Realm mRealm;
 
-    public AbstractRealmHelper() {
+    public AbstractPersonRealmHelper() {
         mRealm = getRealm();
     }
 

@@ -25,7 +25,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.pengin.poinsetia.konkatsudiary.Model.ItemRealmHelper;
+import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
 import com.pengin.poinsetia.konkatsudiary.R;
 
@@ -47,7 +47,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     // RecyclerViewとAdapter
     private RecyclerView mRecyclerView = null;
     private PersonAdapter mAdapter = null;
-    private ItemRealmHelper mRealmHelper;
+    private PersonRealmHelper mRealmHelper;
 
     public interface RecyclerFragmentListener {
         void onRecyclerEvent();
@@ -107,7 +107,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         Realm.init(mActivity);
         // Helperの作成
         // リストの初期表示
-        mRealmHelper = new ItemRealmHelper();
+        mRealmHelper = new PersonRealmHelper();
         // where
         RealmResults<Person> results = mRealmHelper.findAll();
         int listSize = results.size();
@@ -187,7 +187,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         if (person.getAge()!=0 &&
                 !person.getName().equals("")) {
             // insert
-            ItemRealmHelper.insertOneShot(person);
+            PersonRealmHelper.insertOneShot(person);
             // where
             RealmResults<Person> results = mRealmHelper.findAll();
             // positionでソート
