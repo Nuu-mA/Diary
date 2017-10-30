@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 import com.pengin.poinsetia.konkatsudiary.R;
 
 import java.util.ArrayList;
@@ -37,7 +38,8 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PersonFragment extends Fragment implements OnRecyclerListener,View.OnClickListener{
+public class PersonFragment extends Fragment implements OnRecyclerListener,View.OnClickListener,
+        PersonContract.View{
 
     private final int DIALOG_KEY = 100;
 
@@ -48,6 +50,30 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private RecyclerView mRecyclerView = null;
     private PersonAdapter mAdapter = null;
     private PersonRealmHelper mRealmHelper;
+
+    /**
+     * ダイアログの生成を行う
+     */
+    @Override
+    public void showDialog() {
+
+    }
+
+    /**
+     * リストの表示を行う
+     */
+    @Override
+    public void showList() {
+
+    }
+
+    /**
+     * Adapterに入れ替え後の通知を行う
+     */
+    @Override
+    public void notifyItemMoved() {
+
+    }
 
     public interface RecyclerFragmentListener {
         void onRecyclerEvent();
@@ -84,7 +110,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
 
         switch (v.getId()) {
             case R.id.fab :
-                // ダイアログフラグメンドの生成
+                // ★FABの押下イベント・Presenter
                 DialogFragment newFragment = new FlowerDialogFragment();
                 newFragment.setTargetFragment(this,DIALOG_KEY);
                 newFragment.show(getFragmentManager(), "person");
@@ -105,8 +131,9 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Realm.init(mActivity);
+        // ★リスト初期表示イベント・Presenter
         // Helperの作成
-        // リストの初期表示
+        // ★リストの初期表示のDB準備・Model
         mRealmHelper = new PersonRealmHelper();
         // where
         RealmResults<Person> results = mRealmHelper.findAll();
@@ -114,7 +141,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         if (listSize != 0) {
             // positionでソート
             results = results.sort("index");
-            // リスト表示
+            // ★リスト表示・View
             mAdapter = new PersonAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
 
@@ -130,8 +157,10 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                         int fromIndex = viewHolder.getAdapterPosition();
                         // 移動後の場所
                         int toIndex = target.getAdapterPosition();
-                        // インデックスの入れ替えを行う
+                        // ★リストの入れ替えイベント・Presenter
+                        // ★インデックスの入れ替えを行う・Model
                         indexReplace(fromIndex,toIndex);
+                        // ★入れ替え後の通知を行う・View
                         mAdapter.notifyItemMoved(fromIndex,toIndex);
                         return true;
                     }
@@ -139,6 +168,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         int index = viewHolder.getAdapterPosition();
+                        // ★リストのスワイプ削除イベント・Presenter
+                        // ★アイテムの削除を行う・Model
                         deleteList(index);
                         mAdapter.notifyItemRemoved(index);
 
@@ -155,6 +186,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                 if (data != null) {
                     int age = data.getIntExtra("age",0);
                     String name = data.getStringExtra("name");
+                    // ★新しいPersonアイテムの生成・Model
                     // PrimaryKeyの取得
                     int primaryKey = getLastPrimaryKey() ;
                     int position = getIndex();
@@ -192,6 +224,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
             RealmResults<Person> results = mRealmHelper.findAll();
             // positionでソート
             results = results.sort("index");
+            // ★リスト表示・View
             // リスト表示
             mAdapter = new PersonAdapter(mActivity, results, this);
             mRecyclerView.setAdapter(mAdapter);
@@ -228,7 +261,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
      */
     private void deleteList(int index) {
         mRealmHelper.delete(index);
-        // 削除後 index の 振り直し
+        // ★削除後 index の 振り直し・Model
         setUnderList(index);
     }
 
