@@ -27,7 +27,9 @@ import android.widget.TextView;
 
 import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.Model.PersonRepository;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
+import com.pengin.poinsetia.konkatsudiary.Presenter.PersonPresenter;
 import com.pengin.poinsetia.konkatsudiary.R;
 
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ import io.realm.RealmResults;
 public class PersonFragment extends Fragment implements OnRecyclerListener,View.OnClickListener,
         PersonContract.View{
 
+    private final String TAG = "PersonFragment";
+
     private final int DIALOG_KEY = 100;
 
     private Activity mActivity = null;
@@ -51,20 +55,24 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private PersonAdapter mAdapter = null;
     private PersonRealmHelper mRealmHelper;
 
+    private PersonPresenter mPresenter;
+    private PersonRepository mRepository;
+
     /**
      * ダイアログの生成を行う
      */
     @Override
     public void showDialog() {
-
     }
 
     /**
      * リストの表示を行う
      */
     @Override
-    public void showList() {
-
+    public void showList(RealmResults<Person> results) {
+        mAdapter = new PersonAdapter(mActivity, results, this);
+        mRecyclerView.setAdapter(mAdapter);
+        Log.d(TAG,"showList");
     }
 
     /**
@@ -131,7 +139,14 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Realm.init(mActivity);
+        mRealmHelper = new PersonRealmHelper();
+
+        mRepository = new PersonRepository(mRealmHelper);
+        mPresenter = new PersonPresenter(this, mRepository);
+
         // ★リスト初期表示イベント・Presenter
+        mPresenter.initList();
+        /*
         // Helperの作成
         // ★リストの初期表示のDB準備・Model
         mRealmHelper = new PersonRealmHelper();
@@ -146,6 +161,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
             mRecyclerView.setAdapter(mAdapter);
 
         }
+        */
 
         ItemTouchHelper mIth  = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
