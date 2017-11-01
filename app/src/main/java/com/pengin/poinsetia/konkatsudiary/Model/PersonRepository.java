@@ -2,38 +2,39 @@ package com.pengin.poinsetia.konkatsudiary.Model;
 
 
 import android.util.Log;
+import android.util.Printer;
 
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 
 import io.reactivex.Single;
-import io.reactivex.SingleOnSubscribe;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class PersonRepository implements PersonContract.Model{
 
     private final String TAG = "PersonRepository";
     private PersonRealmHelper mRealmHelper;
+    private RealmList<Person> mPersonList;
 
-    public PersonRepository(PersonRealmHelper realmHelper) {
-        this.mRealmHelper = realmHelper;
+    public PersonRepository() {
+        mRealmHelper = new PersonRealmHelper();
+        mPersonList = new RealmList<>();
     }
 
     /**
      * リストの初期表示のリストデータ取得
      */
     @Override
-    public Single getFirstList() {
-
-        return Single.create((SingleOnSubscribe<RealmResults<Person>>) emitter -> {
+    public RealmList<Person> getFirstList() {
             try {
                 RealmResults<Person> results = mRealmHelper.findAll();
-                emitter.onSuccess(results);
+                mPersonList.addAll(results.subList(0,results.size()));
                 Log.d(TAG,"onSuccess");
+                return mPersonList;
             } catch (Exception ex) {
-                emitter.onError(ex);
-                Log.d(TAG,"onError");
+                Log.d(TAG,"onError: " + ex);
+                return null;
             }
-        });
     }
 
     /**

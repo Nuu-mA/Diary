@@ -35,6 +35,7 @@ import com.pengin.poinsetia.konkatsudiary.R;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
@@ -56,7 +57,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private PersonRealmHelper mRealmHelper;
 
     private PersonPresenter mPresenter;
-    private PersonRepository mRepository;
+//    private PersonRepository mRepository;
 
     /**
      * ダイアログの生成を行う
@@ -69,8 +70,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
      * リストの表示を行う
      */
     @Override
-    public void showList(RealmResults<Person> results) {
-        mAdapter = new PersonAdapter(mActivity, results, this);
+    public void showList(RealmList<Person> personList) {
+        mAdapter = new PersonAdapter(mActivity, personList, this);
         mRecyclerView.setAdapter(mAdapter);
         Log.d(TAG,"showList");
     }
@@ -141,8 +142,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         Realm.init(mActivity);
         mRealmHelper = new PersonRealmHelper();
 
-        mRepository = new PersonRepository(mRealmHelper);
-        mPresenter = new PersonPresenter(this, mRepository);
+//        mRepository = new PersonRepository(mRealmHelper);
+        mPresenter = new PersonPresenter(this);
 
         // ★リスト初期表示イベント・Presenter
         mPresenter.initList();

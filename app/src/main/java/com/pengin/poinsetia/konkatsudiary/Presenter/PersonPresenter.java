@@ -6,8 +6,14 @@ import android.util.Log;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
 import com.pengin.poinsetia.konkatsudiary.Model.PersonRepository;
 
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class PersonPresenter implements PersonContract.Presenter {
@@ -17,9 +23,9 @@ public class PersonPresenter implements PersonContract.Presenter {
     private PersonContract.View mView;
     private PersonRepository mRepository;
 
-    public PersonPresenter(PersonContract.View view, PersonRepository repository) {
+    public PersonPresenter(PersonContract.View view) {
         this.mView = view;
-        this.mRepository = repository;
+        mRepository = new PersonRepository();
     }
 
     /**
@@ -27,23 +33,8 @@ public class PersonPresenter implements PersonContract.Presenter {
      */
     @Override
     public void initList() {
-        mRepository.getFirstList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
-                .subscribe(new DisposableSingleObserver<RealmResults<Person>> () {
-                    @Override
-                    public void onSuccess(RealmResults<Person> results) {
-                        Log.d(TAG,"onSuccess");
-                        if (results.size() != 0) {
-                            mView.showList(results);
-                        }
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG,"onError");
-                        // error
-                    }
-                });
+        RealmList<Person> personList = mRepository.getFirstList();
+        if (personList.size() != 0) mView.showList(personList);
     }
 
     /**

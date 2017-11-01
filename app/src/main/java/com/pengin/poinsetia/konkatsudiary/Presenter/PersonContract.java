@@ -3,6 +3,7 @@ package com.pengin.poinsetia.konkatsudiary.Presenter;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
 
 import io.reactivex.Single;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public interface PersonContract {
@@ -26,7 +27,7 @@ public interface PersonContract {
         void showDialog();
 
         // リストの表示を行う
-        void showList(RealmResults<Person> results);
+        void showList(RealmList<Person> results);
 
         // Adapterに入れ替え後の通知を行う
         void notifyItemMoved();
@@ -35,7 +36,7 @@ public interface PersonContract {
 
     interface Model {
         // リストの初期表示のリストデータ取得
-        Single getFirstList();
+        RealmList<Person> getFirstList();
 
         // インデックスの入れ替えを行う
         void itemIndexReplace();
