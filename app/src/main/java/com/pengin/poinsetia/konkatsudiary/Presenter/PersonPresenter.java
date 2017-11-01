@@ -33,7 +33,9 @@ public class PersonPresenter implements PersonContract.Presenter {
      */
     @Override
     public void initList() {
+        // Repositoryに初期のリスト取得要求
         RealmList<Person> personList = mRepository.getFirstList();
+        // 1件以上あるならViewに表示要求
         if (personList.size() != 0) mView.showList(personList);
     }
 

@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-//import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 
 import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
-import com.pengin.poinsetia.konkatsudiary.Model.PersonRepository;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonPresenter;
 import com.pengin.poinsetia.konkatsudiary.R;
@@ -57,7 +55,6 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private PersonRealmHelper mRealmHelper;
 
     private PersonPresenter mPresenter;
-//    private PersonRepository mRepository;
 
     /**
      * ダイアログの生成を行う
@@ -140,29 +137,11 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Realm.init(mActivity);
-        mRealmHelper = new PersonRealmHelper();
-
-//        mRepository = new PersonRepository(mRealmHelper);
+//        mRealmHelper = new PersonRealmHelper();
         mPresenter = new PersonPresenter(this);
 
-        // ★リスト初期表示イベント・Presenter
+        // リスト初期表示イベント
         mPresenter.initList();
-        /*
-        // Helperの作成
-        // ★リストの初期表示のDB準備・Model
-        mRealmHelper = new PersonRealmHelper();
-        // where
-        RealmResults<Person> results = mRealmHelper.findAll();
-        int listSize = results.size();
-        if (listSize != 0) {
-            // positionでソート
-            results = results.sort("index");
-            // ★リスト表示・View
-            mAdapter = new PersonAdapter(mActivity, results, this);
-            mRecyclerView.setAdapter(mAdapter);
-
-        }
-        */
 
         ItemTouchHelper mIth  = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
