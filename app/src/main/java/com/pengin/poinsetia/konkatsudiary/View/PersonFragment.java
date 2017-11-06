@@ -61,6 +61,9 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
      */
     @Override
     public void showDialog() {
+        DialogFragment newFragment = new AddPersonDialogFragment();
+        newFragment.setTargetFragment(this,DIALOG_KEY);
+        newFragment.show(getFragmentManager(), "person");
     }
 
     /**
@@ -116,10 +119,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
 
         switch (v.getId()) {
             case R.id.fab :
-                // ★FABの押下イベント・Presenter
-                DialogFragment newFragment = new FlowerDialogFragment();
-                newFragment.setTargetFragment(this,DIALOG_KEY);
-                newFragment.show(getFragmentManager(), "person");
+                // FABの押下イベント
+                mPresenter.pressFAB();
                 break;
             default:
                 break;
@@ -177,18 +178,16 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 指定したrequestCodeで戻ってくる
-        if (resultCode == Activity.RESULT_OK){
-            if (requestCode == DIALOG_KEY){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == DIALOG_KEY) {
                 if (data != null) {
-                    int age = data.getIntExtra("age",0);
+                    int age = data.getIntExtra("age", 0);
                     String name = data.getStringExtra("name");
-                    // ★新しいPersonアイテムの生成・Model
-                    // PrimaryKeyの取得
-                    int primaryKey = getLastPrimaryKey() ;
-                    int position = getIndex();
-                    // 受け取った値でDB追加とリスト表示
-                    createList(getPerson(primaryKey,age,name,position));
-                    Log.d("mPrimaryKey", primaryKey +"");
+                    // AddPerson 生成イベント
+                    if (age != 0 &&
+                            !name.equals("")) {
+                        mPresenter.dialogResultOk(age, name);
+                    }
                 }
             }
         }
@@ -208,49 +207,6 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     }
 
     // ~~~~~~ Repository に移動予定 ~~~~~~
-
-    // レコードの追加を実行
-    private void createList(Person person) {
-        // 空の時は追加しない
-        if (person.getAge()!=0 &&
-                !person.getName().equals("")) {
-            // insert
-            PersonRealmHelper.insertOneShot(person);
-            // where
-            RealmResults<Person> results = mRealmHelper.findAll();
-            // positionでソート
-            results = results.sort("index");
-            // ★リスト表示・View
-            // リスト表示
-            mAdapter = new PersonAdapter(mActivity, results, this);
-            mRecyclerView.setAdapter(mAdapter);
-        }
-    }
-
-    /**
-     * レコード追加用のPrimaryKeyを返す
-     * @return PrimaryKey
-     */
-    private int getLastPrimaryKey() {
-        RealmResults<Person> results = mRealmHelper.findAll();
-        if (results.size() == 0) {
-            return 0;
-        } else {
-            // 最新のPrimaryKey + 1 を返却する
-            results.sort("id");
-            return results.last().getId() + 1;
-        }
-    }
-
-    /**
-     * レコード追加用のIndexを返す
-     * @return Index
-     */
-    private int getIndex() {
-        // コード数がリストのインデックスになる
-        RealmResults<Person> results = mRealmHelper.findAll();
-        return results.size();
-    }
 
     /**
      * レコードの削除を実行
@@ -296,63 +252,5 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRealmHelper.setIndex(toPerson, fromPos);
     }
 
-    /**
-     * Flower入力用Dialog
-     */
-    public static class FlowerDialogFragment extends DialogFragment {
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogStyle);
-            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.flower_dialog_layout, null);
-            Intent result = new Intent();
-            // 年齢選択用プルダウンリスト
-            Spinner selectedAge = (Spinner) view.findViewById(R.id.person_age_spinner);
-            selectedAge.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position != 0) {
-                        String age = parent.getItemAtPosition(position).toString();
-                        result.putExtra("age", Integer.parseInt(age));
-                    }
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    // do Nothing
-                }
-            });
-            builder.setView(view);
-            builder.setNegativeButton("閉じる", (dialog, id) -> {
-
-                TextView nameEditText = (TextView)view.findViewById(R.id.person_name_text);
-                String nameText = nameEditText.getText().toString();
-                result.putExtra("name",nameText);
-                if (getTargetFragment() != null) {
-                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, result);
-                }
-            });
-            return builder.create();
-        }
-    }
-
-    /**
-     * DB追加用のPersonを生成する
-     * @param id PrimaryKey
-     * @param age 年齢
-     * @param name 名前
-     * @param index リストの初期位置
-     * @return Person
-     */
-    private Person getPerson(int id, int age, String name, int index) {
-
-        Person person = new Person();
-        person.setId(id);
-        person.setAge(age);
-        person.setName(name);
-        person.setIndex(index);
-
-        return person;
-    }
 }

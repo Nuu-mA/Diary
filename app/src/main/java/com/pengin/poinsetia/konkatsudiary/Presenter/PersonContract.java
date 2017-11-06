@@ -15,6 +15,9 @@ public interface PersonContract {
         // FABの押下イベント
         void pressFAB();
 
+        // Dialog「閉じるボタン」押下
+        void dialogResultOk(int age, String name);
+
         // リストの入れ替えイベント
         void onMoveList();
 
@@ -37,6 +40,9 @@ public interface PersonContract {
     interface Model {
         // リストの初期表示のリストデータ取得
         RealmList<Person> getFirstList();
+
+        // 新しいPersonアイテムの生成
+        RealmList<Person> createPerson(int age, String name);
 
         // インデックスの入れ替えを行う
         void itemIndexReplace();

@@ -44,8 +44,16 @@ public class PersonPresenter implements PersonContract.Presenter {
      */
     @Override
     public void pressFAB() {
-
+        mView.showDialog();
     }
+
+    @Override
+    public void dialogResultOk(int age, String name) {
+        RealmList<Person> personList = mRepository.createPerson(age, name);
+        // 1件以上あるならViewに表示要求
+        if (personList.size() != 0) mView.showList(personList);
+    }
+
 
     /**
      * リストの入れ替えイベント
