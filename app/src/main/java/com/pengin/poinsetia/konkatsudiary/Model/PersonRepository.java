@@ -7,9 +7,13 @@ import android.util.Printer;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 import com.pengin.poinsetia.konkatsudiary.View.PersonAdapter;
 
+import java.util.ArrayList;
+
 import io.reactivex.Single;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+
+import static com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract.ERROR_INDEX;
 
 public class PersonRepository implements PersonContract.Model{
 
@@ -69,8 +73,11 @@ public class PersonRepository implements PersonContract.Model{
      * アイテムの削除を行う
      */
     @Override
-    public void itemDelete() {
-
+    public int itemDelete(int index) {
+        mRealmHelper.delete(index);
+        // 削除後 index を振り直す
+        //
+        return setUnderList(index);
     }
 
     /**
@@ -135,5 +142,34 @@ public class PersonRepository implements PersonContract.Model{
         results = results.sort("index");
 
         return results;
+    }
+
+    /**
+     * 指定位置より下のIndexを振り直す
+     * @param index 振り直し始め番号
+     */
+    private int setUnderList(int index) {
+        try {
+            // 削除した以下の位置のリストを取得
+            RealmResults<Person> results = mRealmHelper.deleteUnderList(index);
+            if (results.size() != 0) {
+                int newPos = index;
+                // 一度Arrayに詰める
+                ArrayList<Person> persons = new ArrayList<>();
+                persons.addAll(results);
+                // Arrayの情報を元に振り直しを実行する
+                for (int i = 0; i < persons.size(); i++) {
+                    Person person = persons.get(i);
+                    mRealmHelper.setIndex(person, newPos);
+                    newPos++;
+                }
+//                persons.clear();
+                return index;
+            }
+            // 削除後のリストサイズが0の時は-1を返す
+            return ERROR_INDEX;
+        } catch (Exception ex) {
+            return ERROR_INDEX;
+        }
     }
 }

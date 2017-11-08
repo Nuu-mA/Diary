@@ -2,16 +2,12 @@ package com.pengin.poinsetia.konkatsudiary.View;
 
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,21 +16,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonPresenter;
 import com.pengin.poinsetia.konkatsudiary.R;
 
-import java.util.ArrayList;
-
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,6 +65,15 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.setAdapter(mAdapter);
         Log.d(TAG,"showList");
     }
+
+    /**
+     * Adapterに削除後の通知を行う
+     */
+    @Override
+    public void notifyItemRemoved(int index) {
+        mAdapter.notifyItemRemoved(index);
+    }
+
 
     /**
      * Adapterに入れ替え後の通知を行う
@@ -165,11 +164,9 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         int index = viewHolder.getAdapterPosition();
-                        // ★リストのスワイプ削除イベント・Presenter
-                        // ★アイテムの削除を行う・Model
-                        deleteList(index);
-                        mAdapter.notifyItemRemoved(index);
-
+                        // リストのスワイプ削除イベント
+                        mPresenter.onSwiped(index);
+//                        mAdapter.notifyItemRemoved(index);
                     }
                 });
         mIth.attachToRecyclerView(mRecyclerView);
@@ -207,38 +204,6 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     }
 
     // ~~~~~~ Repository に移動予定 ~~~~~~
-
-    /**
-     * レコードの削除を実行
-     */
-    private void deleteList(int index) {
-        mRealmHelper.delete(index);
-        // ★削除後 index の 振り直し・Model
-        setUnderList(index);
-    }
-
-    /**
-     * 指定位置より下のIndexを振り直す
-     * @param index 振り直し始め番号
-     */
-    private  void setUnderList(int index) {
-        // 削除した以下の位置のリストを取得
-        RealmResults<Person> results = mRealmHelper.deleteUnderList(index);
-        if (results.size() != 0) {
-            int newPos = index;
-            // 一度Arrayに詰める
-            ArrayList<Person> persons = new ArrayList<>();
-            for (int i = 0; i < results.size();i++ ) {
-                persons.add(results.get(i));
-            }
-            // Arrayの情報を元に振り直しを実行する
-            for (Person person : persons) {
-                mRealmHelper.setIndex(person,newPos);
-                newPos++;
-            }
-            persons.clear();
-        }
-    }
 
     /**
      * Indexの入れ替えを実行する

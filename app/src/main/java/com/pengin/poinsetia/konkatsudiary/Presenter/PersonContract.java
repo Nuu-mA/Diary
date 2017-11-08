@@ -22,7 +22,7 @@ public interface PersonContract {
         void onMoveList();
 
         // リストのスワイプ削除イベント
-        void onSwiped();
+        void onSwiped(int index);
     }
 
     interface View {
@@ -31,6 +31,9 @@ public interface PersonContract {
 
         // リストの表示を行う
         void showList(RealmList<Person> results);
+
+        // Adapterに削除後の通知を行う
+        void notifyItemRemoved(int newIndex);
 
         // Adapterに入れ替え後の通知を行う
         void notifyItemMoved();
@@ -48,10 +51,12 @@ public interface PersonContract {
         void itemIndexReplace();
 
         // アイテムの削除を行う
-        void itemDelete();
+        int itemDelete(int index);
 
         // アイテムインデックスの振り直しを行う
         void itemIndexRenumber();
     }
+
+    int ERROR_INDEX = -1;
 
 }

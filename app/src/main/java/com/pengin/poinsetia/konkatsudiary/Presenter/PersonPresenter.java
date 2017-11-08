@@ -16,6 +16,8 @@ import io.reactivex.schedulers.Schedulers;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
+import static com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract.ERROR_INDEX;
+
 public class PersonPresenter implements PersonContract.Presenter {
 
     private final String TAG = "PersonPresenter";
@@ -67,8 +69,12 @@ public class PersonPresenter implements PersonContract.Presenter {
      * リストのスワイプ削除イベント
      */
     @Override
-    public void onSwiped() {
-
+    public void onSwiped(int index) {
+        int newIndex = mRepository.itemDelete(index);
+        // エラーインデックスでなければViewに通知する
+        if (newIndex != ERROR_INDEX) {
+            mView.notifyItemRemoved(newIndex);
+        }
     }
 
 
