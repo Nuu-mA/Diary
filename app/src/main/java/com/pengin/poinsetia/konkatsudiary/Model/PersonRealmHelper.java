@@ -48,7 +48,7 @@ public class PersonRealmHelper extends AbstractPersonRealmHelper<Person> {
 
     @Override
     public RealmResults<Person> findAll() {
-        return mRealm.where(Person.class).findAll();
+        return mRealm.where(Person.class).findAllSorted("index");
     }
 
 

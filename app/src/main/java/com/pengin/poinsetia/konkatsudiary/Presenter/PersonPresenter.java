@@ -70,11 +70,9 @@ public class PersonPresenter implements PersonContract.Presenter {
      */
     @Override
     public void onSwiped(int index) {
-        int newIndex = mRepository.itemDelete(index);
-        // エラーインデックスでなければViewに通知する
-        if (newIndex != ERROR_INDEX) {
-            mView.notifyItemRemoved(newIndex);
-        }
+        RealmList<Person> personList = mRepository.itemDelete(index);
+        // リストが返却されればViewに通知する
+        if (personList != null ) mView.notifyItemRemoved();
     }
 
 

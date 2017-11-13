@@ -33,7 +33,7 @@ public interface PersonContract {
         void showList(RealmList<Person> results);
 
         // Adapterに削除後の通知を行う
-        void notifyItemRemoved(int newIndex);
+        void notifyItemRemoved();
 
         // Adapterに入れ替え後の通知を行う
         void notifyItemMoved();
@@ -51,7 +51,7 @@ public interface PersonContract {
         void itemIndexReplace();
 
         // アイテムの削除を行う
-        int itemDelete(int index);
+        RealmList<Person> itemDelete(int index);
 
         // アイテムインデックスの振り直しを行う
         void itemIndexRenumber();

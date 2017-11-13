@@ -73,11 +73,16 @@ public class PersonRepository implements PersonContract.Model{
      * アイテムの削除を行う
      */
     @Override
-    public int itemDelete(int index) {
+    public RealmList<Person> itemDelete(int index) {
         mRealmHelper.delete(index);
         // 削除後 index を振り直す
-        //
-        return setUnderList(index);
+        if (setUnderList(index) != ERROR_INDEX) {
+            mPersonList.clear();
+            RealmResults<Person> results = mRealmHelper.findAll();
+            mPersonList.addAll(results.subList(0,results.size()));
+            return mPersonList;
+        }
+        return null;
     }
 
     /**
@@ -163,12 +168,12 @@ public class PersonRepository implements PersonContract.Model{
                     mRealmHelper.setIndex(person, newPos);
                     newPos++;
                 }
-//                persons.clear();
-                return index;
+                persons.clear();
             }
-            // 削除後のリストサイズが0の時は-1を返す
-            return ERROR_INDEX;
+            // 削除したインデックスを返却する
+            return index;
         } catch (Exception ex) {
+            Log.d(TAG,"onError: " + ex);
             return ERROR_INDEX;
         }
     }

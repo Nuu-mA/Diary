@@ -4,6 +4,9 @@ package com.pengin.poinsetia.konkatsudiary.View;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -36,6 +39,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
 
     private final int DIALOG_KEY = 100;
 
+    private final static int MSG_REMOV_LIST = 1;
+
     private Activity mActivity = null;
     private View mView;
 
@@ -43,6 +48,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private RecyclerView mRecyclerView = null;
     private PersonAdapter mAdapter = null;
     private PersonRealmHelper mRealmHelper;
+    private Handler mHandler;
 
     private PersonPresenter mPresenter;
 
@@ -63,15 +69,14 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     public void showList(RealmList<Person> personList) {
         mAdapter = new PersonAdapter(mActivity, personList, this);
         mRecyclerView.setAdapter(mAdapter);
-        Log.d(TAG,"showList");
     }
 
     /**
      * Adapterに削除後の通知を行う
      */
     @Override
-    public void notifyItemRemoved(int index) {
-        mAdapter.notifyItemRemoved(index);
+    public void notifyItemRemoved() {
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -140,8 +145,21 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
 //        mRealmHelper = new PersonRealmHelper();
         mPresenter = new PersonPresenter(this);
 
-        // リスト初期表示イベント
-        mPresenter.initList();
+        if (mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+
+                    switch (msg.what) {
+                        case MSG_REMOV_LIST:
+                            int index = (int) msg.obj;
+                            mPresenter.onSwiped(index);
+                            Log.d(TAG, "removedList");
+                            break;
+                    }
+                }
+            };
+        }
 
         ItemTouchHelper mIth  = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
@@ -165,11 +183,15 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         int index = viewHolder.getAdapterPosition();
                         // リストのスワイプ削除イベント
-                        mPresenter.onSwiped(index);
-//                        mAdapter.notifyItemRemoved(index);
+                        mAdapter.notifyItemRemoved(index);
+                        // RealmDBのアイテム削除を開始する
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_REMOV_LIST,index));
                     }
                 });
         mIth.attachToRecyclerView(mRecyclerView);
+
+        // リスト初期表示イベント
+        mPresenter.initList();
     }
 
     @Override
@@ -196,6 +218,10 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.setAdapter(null);
         // DB クローズ
         mRealmHelper.destroy();
+        // ハンドラーの停止
+        if (mHandler != null) {
+            mHandler = null;
+        }
     }
 
     @Override
