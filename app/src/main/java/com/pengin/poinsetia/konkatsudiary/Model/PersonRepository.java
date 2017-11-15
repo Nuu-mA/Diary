@@ -65,8 +65,15 @@ public class PersonRepository implements PersonContract.Model{
      * インデックスの入れ替えを行う
      */
     @Override
-    public void itemIndexReplace() {
+    public void itemIndexReplace(int fromIndex, int toIndex) {
+        Person fromPerson = mRealmHelper.getRealmObject(fromIndex);
+        Person toPerson = mRealmHelper.getRealmObject(toIndex);
+        mRealmHelper.setIndex(fromPerson, toIndex);
+        mRealmHelper.setIndex(toPerson, fromIndex);
 
+        mPersonList.clear();
+        RealmResults<Person> results = mRealmHelper.findAll();
+        mPersonList.addAll(results.subList(0,results.size()));
     }
 
     /**
@@ -98,12 +105,11 @@ public class PersonRepository implements PersonContract.Model{
      * @return PrimaryKey
      */
     private int getLastPrimaryKey() {
-        RealmResults<Person> results = mRealmHelper.findAll();
+        RealmResults<Person> results = mRealmHelper.sortedId();
         if (results.size() == 0) {
             return 0;
         } else {
             // 最新のPrimaryKey + 1 を返却する
-            results.sort("id");
             return results.last().getId() + 1;
         }
     }

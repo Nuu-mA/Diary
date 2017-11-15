@@ -19,7 +19,7 @@ public interface PersonContract {
         void dialogResultOk(int age, String name);
 
         // リストの入れ替えイベント
-        void onMoveList();
+        void onMoveList(int fromIndex, int toIndex);
 
         // リストのスワイプ削除イベント
         void onSwiped(int index);
@@ -48,7 +48,7 @@ public interface PersonContract {
         RealmList<Person> createPerson(int age, String name);
 
         // インデックスの入れ替えを行う
-        void itemIndexReplace();
+        void itemIndexReplace(int fromIndex, int toIndex);
 
         // アイテムの削除を行う
         RealmList<Person> itemDelete(int index);

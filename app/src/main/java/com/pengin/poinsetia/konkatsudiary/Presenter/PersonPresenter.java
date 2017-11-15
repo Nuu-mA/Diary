@@ -61,8 +61,9 @@ public class PersonPresenter implements PersonContract.Presenter {
      * リストの入れ替えイベント
      */
     @Override
-    public void onMoveList() {
-
+    public void onMoveList(int fromIndex, int toIndex) {
+        mRepository.itemIndexReplace(fromIndex,toIndex);
+        mView.notifyItemMoved();
     }
 
     /**

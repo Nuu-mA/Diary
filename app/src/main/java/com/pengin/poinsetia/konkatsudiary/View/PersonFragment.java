@@ -40,6 +40,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private final int DIALOG_KEY = 100;
 
     private final static int MSG_REMOV_LIST = 1;
+    private final static int MSG_MOVE_LIST = 2;
 
     private Activity mActivity = null;
     private View mView;
@@ -76,6 +77,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
      */
     @Override
     public void notifyItemRemoved() {
+        // Adapterにリストデータ変更を通知する
         mAdapter.notifyDataSetChanged();
     }
 
@@ -85,7 +87,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
      */
     @Override
     public void notifyItemMoved() {
-
+        // Adapterにリストデータ変更を通知する
+        mAdapter.notifyDataSetChanged();
     }
 
     public interface RecyclerFragmentListener {
@@ -145,6 +148,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
 //        mRealmHelper = new PersonRealmHelper();
         mPresenter = new PersonPresenter(this);
 
+        // メインHandlerの作成
         if (mHandler == null) {
             mHandler = new Handler(Looper.getMainLooper()) {
                 @Override
@@ -153,8 +157,15 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                     switch (msg.what) {
                         case MSG_REMOV_LIST:
                             int index = (int) msg.obj;
+                            // リストのスワイプ削除イベント
                             mPresenter.onSwiped(index);
                             Log.d(TAG, "removedList");
+                            break;
+                        case MSG_MOVE_LIST:
+                            int fromIndex = msg.arg1;
+                            int toIndex = msg.arg2;
+                            // リストの入れ替えイベント
+                            mPresenter.onMoveList(fromIndex,toIndex);
                             break;
                     }
                 }
@@ -171,10 +182,9 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                         int fromIndex = viewHolder.getAdapterPosition();
                         // 移動後の場所
                         int toIndex = target.getAdapterPosition();
-                        // ★リストの入れ替えイベント・Presenter
-                        // ★インデックスの入れ替えを行う・Model
-                        indexReplace(fromIndex,toIndex);
-                        // ★入れ替え後の通知を行う・View
+                        // RealmDBのアイテム入れ替えを開始する
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_MOVE_LIST,fromIndex,toIndex));
+                        // リストアイテムの移動通知
                         mAdapter.notifyItemMoved(fromIndex,toIndex);
                         return true;
                     }
@@ -182,7 +192,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         int index = viewHolder.getAdapterPosition();
-                        // リストのスワイプ削除イベント
+                        // リストアイテムの削除通知
                         mAdapter.notifyItemRemoved(index);
                         // RealmDBのアイテム削除を開始する
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_REMOV_LIST,index));
@@ -228,20 +238,5 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     public void onRecyclerClicked(View v, int position) {
         // セルクリック処理
     }
-
-    // ~~~~~~ Repository に移動予定 ~~~~~~
-
-    /**
-     * Indexの入れ替えを実行する
-     * @param fromPos 移動前Index
-     * @param toPos 移動後Index
-     */
-    private void indexReplace(int fromPos, int toPos) {
-        Person fromPerson = mRealmHelper.getRealmObject(fromPos);
-        Person toPerson = mRealmHelper.getRealmObject(toPos);
-        mRealmHelper.setIndex(fromPerson, toPos);
-        mRealmHelper.setIndex(toPerson, fromPos);
-    }
-
 
 }
