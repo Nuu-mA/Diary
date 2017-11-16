@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
-import com.pengin.poinsetia.konkatsudiary.Model.PersonRealmHelper;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonPresenter;
 import com.pengin.poinsetia.konkatsudiary.R;
@@ -43,12 +42,10 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private final static int MSG_MOVE_LIST = 2;
 
     private Activity mActivity = null;
-    private View mView;
 
     // RecyclerViewとAdapter
     private RecyclerView mRecyclerView = null;
     private PersonAdapter mAdapter = null;
-    private PersonRealmHelper mRealmHelper;
     private Handler mHandler;
 
     private PersonPresenter mPresenter;
@@ -109,16 +106,16 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
         // RecyclerViewの参照を取得
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         // レイアウトマネージャを設定(ここで縦方向の標準リストであることを指定)
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         // フローティングアクションボタンの実装
-        FloatingActionButton fab = (FloatingActionButton) mView.findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        return mView;
+        return view;
     }
 
     @Override
@@ -145,7 +142,6 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Realm.init(mActivity);
-//        mRealmHelper = new PersonRealmHelper();
         mPresenter = new PersonPresenter(this);
 
         // メインHandlerの作成
@@ -227,7 +223,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         super.onDestroy();
         mRecyclerView.setAdapter(null);
         // DB クローズ
-        mRealmHelper.destroy();
+        mPresenter.onDestroy();
         // ハンドラーの停止
         if (mHandler != null) {
             mHandler = null;

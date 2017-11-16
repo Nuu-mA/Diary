@@ -23,6 +23,9 @@ public interface PersonContract {
 
         // リストのスワイプ削除イベント
         void onSwiped(int index);
+
+        // 終了処理イベント
+        void onDestroy();
     }
 
     interface View {
@@ -53,8 +56,9 @@ public interface PersonContract {
         // アイテムの削除を行う
         RealmList<Person> itemDelete(int index);
 
-        // アイテムインデックスの振り直しを行う
-        void itemIndexRenumber();
+        // DBのクローズ処理を行う
+        void realmClose();
+
     }
 
     int ERROR_INDEX = -1;

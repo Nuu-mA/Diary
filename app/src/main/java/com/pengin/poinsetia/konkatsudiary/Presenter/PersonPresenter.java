@@ -76,5 +76,13 @@ public class PersonPresenter implements PersonContract.Presenter {
         if (personList != null ) mView.notifyItemRemoved();
     }
 
+    /**
+     * 終了処理イベント
+     */
+    @Override
+    public void onDestroy() {
+        mRepository.realmClose();
+    }
+
 
 }

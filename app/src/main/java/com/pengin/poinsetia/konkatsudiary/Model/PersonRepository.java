@@ -93,11 +93,11 @@ public class PersonRepository implements PersonContract.Model{
     }
 
     /**
-     * アイテムインデックスの振り直しを行う
+     * Realmのクローズ処理を行う
      */
     @Override
-    public void itemIndexRenumber() {
-
+    public void realmClose() {
+        mRealmHelper.destroy();
     }
 
     /**
