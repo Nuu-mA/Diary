@@ -29,6 +29,8 @@ public abstract class AbstractPersonRealmHelper<T extends RealmObject> {
 
     public abstract RealmResults<T> findAll();
 
+    public abstract RealmResults<T> sortedId();
+
     public abstract void delete(int position);
 
     public abstract void setIndex(Person person, int index);

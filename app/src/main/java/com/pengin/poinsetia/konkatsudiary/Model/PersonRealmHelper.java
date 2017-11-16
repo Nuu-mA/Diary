@@ -48,7 +48,12 @@ public class PersonRealmHelper extends AbstractPersonRealmHelper<Person> {
 
     @Override
     public RealmResults<Person> findAll() {
-        return mRealm.where(Person.class).findAll();
+        return mRealm.where(Person.class).findAllSorted("index");
+    }
+
+    @Override
+    public RealmResults<Person> sortedId() {
+        return mRealm.where(Person.class).findAllSorted("id");
     }
 
 
