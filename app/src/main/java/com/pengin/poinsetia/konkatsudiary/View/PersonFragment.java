@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pengin.poinsetia.konkatsudiary.Model.Person;
+import com.pengin.poinsetia.konkatsudiary.Model.PersonRepository;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonContract;
 import com.pengin.poinsetia.konkatsudiary.Presenter.PersonPresenter;
 import com.pengin.poinsetia.konkatsudiary.R;
@@ -49,6 +50,7 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
     private Handler mHandler;
 
     private PersonPresenter mPresenter;
+    private PersonRepository mRepository;
 
     /**
      * ダイアログの生成を行う
@@ -142,7 +144,8 @@ public class PersonFragment extends Fragment implements OnRecyclerListener,View.
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         Realm.init(mActivity);
-        mPresenter = new PersonPresenter(this);
+        mRepository = new PersonRepository();
+        mPresenter = new PersonPresenter(this,mRepository);
 
         // メインHandlerの作成
         if (mHandler == null) {

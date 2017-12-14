@@ -25,9 +25,9 @@ public class PersonPresenter implements PersonContract.Presenter {
     private PersonContract.View mView;
     private PersonRepository mRepository;
 
-    public PersonPresenter(PersonContract.View view) {
+    public PersonPresenter(PersonContract.View view, PersonRepository repository) {
         this.mView = view;
-        mRepository = new PersonRepository();
+        this.mRepository = repository;
     }
 
     /**
